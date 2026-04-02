@@ -105,7 +105,40 @@ The poster wins either way. You are the product.
 - Quora-style fabricated scenarios: "my child got a B, I smashed their laptop and
   took all their possessions. Was I too soft?" — designed purely to generate outraged replies
 
-### 6. Dunking & Ratio Bait
+### 6. Trojan Horse Ragebait / "Suit & Tie" Ragebait
+- Wrapping a ragebait narrative inside genuinely interesting or positive content
+- Politicians and pundits who use a cool/inspiring event as a vehicle to attack
+  media, institutions, or political opponents
+- The actual content (space launch, military achievement, scientific breakthrough)
+  is real and exciting, but the FRAMING sneaks in an outrage narrative
+- "Legacy media is barely covering it" / "the media doesn't want you to see this" /
+  "why isn't anyone talking about this?" — when in fact media IS covering it
+- Uses the inspiring content as a shield: if you criticize the framing, they say
+  "why don't you support the troops/astronauts/scientists?"
+- The tell: the tweet could just celebrate the moment, but instead leads with
+  an attack on someone/something. The outrage framing comes BEFORE the positive content.
+- **Example**: A congressman tweets about an exciting moon mission but opens with
+  "Legacy media is barely covering it, and that is a failure worth naming out loud."
+  Strip that first line and it's a great tweet about space. But they CHOSE to lead
+  with media outrage because that's what drives engagement.
+- This is especially insidious because the underlying content IS good — people share
+  it thinking they're sharing something inspiring, but they're actually amplifying
+  the outrage narrative baked into the framing.
+
+### 7. "Nobody's Talking About This" / False Suppression Narrative
+- Claiming media isn't covering something that media IS in fact covering
+- "Legacy media is barely covering this" / "why isn't anyone talking about this?" /
+  "the media doesn't want you to see this" / "you won't see this on CNN"
+- Creates a false sense of suppression to make the audience feel like insiders
+  who are "in the know" — you feel special for seeing it, angry at media for "hiding" it
+- Often attached to events that are literally being covered by every major outlet
+- The suppression narrative is the ragebait — it transforms a normal news story into
+  a conspiracy of silence that doesn't exist
+- Works because it's almost impossible to disprove in a tweet — checking requires
+  effort, and by then you've already engaged
+- Both left and right use this: "MSM won't cover this" / "Fox won't show you this"
+
+### 8. Dunking & Ratio Bait
 - Posting content from "the other side" specifically so your audience can dunk on it
 - "Look what they're doing now" format
 - Screenshotting someone with a small following to expose them to millions
@@ -113,7 +146,7 @@ The poster wins either way. You are the product.
 - Quote-tweet bait — provocative posts designed to generate angry quote tweets,
   which the algorithm then amplifies to an even wider audience
 
-### 7. Context Stripping
+### 9. Context Stripping
 - Presenting clips/screenshots without the full context that would change the meaning
 - Editing quotes or interactions to remove nuance
 - Aggregating and repackaging real news with maximum outrage framing
