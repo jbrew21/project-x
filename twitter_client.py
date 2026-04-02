@@ -15,19 +15,25 @@ def get_client() -> tweepy.Client:
 
 
 def post_tweet(text: str, reply_to_id: str | None = None) -> str | None:
-    """Post a tweet, optionally as a reply. Returns the new tweet ID."""
+    """Post a tweet, optionally as a reply. Returns the new tweet ID. Retries on 503."""
+    import time
     client = get_client()
-    try:
-        response = client.create_tweet(
-            text=text,
-            in_reply_to_tweet_id=reply_to_id,
-        )
-        tweet_id = response.data["id"]
-        print(f"Posted tweet {tweet_id}")
-        return tweet_id
-    except Exception as e:
-        print(f"Error posting tweet: {e}")
-        return None
+    for attempt in range(3):
+        try:
+            response = client.create_tweet(
+                text=text,
+                in_reply_to_tweet_id=reply_to_id,
+            )
+            tweet_id = response.data["id"]
+            print(f"Posted tweet {tweet_id}")
+            return tweet_id
+        except Exception as e:
+            if "503" in str(e) and attempt < 2:
+                print(f"503 error, retrying in {2 ** attempt}s...")
+                time.sleep(2 ** attempt)
+                continue
+            print(f"Error posting tweet: {e}")
+            return None
 
 
 def get_tweet_by_id(tweet_id: str) -> dict | None:

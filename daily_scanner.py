@@ -25,7 +25,7 @@ RAGEBAIT_SEARCH_QUERIES = [
 ]
 
 # Minimum engagement to be considered for the daily thread
-MIN_ENGAGEMENT_SCORE = 500
+MIN_ENGAGEMENT_SCORE = 100
 
 
 def scan_viral_ragebait() -> list[dict]:
