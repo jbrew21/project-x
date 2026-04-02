@@ -158,6 +158,9 @@ def search_viral_tweets(query: str, max_results: int = 50) -> list[dict]:
     except Exception as e:
         print(f"Error searching tweets: {e}")
         return []
+
+
+def get_recent_tweets_from_user(username: str, max_results: int = 5) -> list[dict]:
     """Get recent tweets from a specific user."""
     client = get_client()
     try:
