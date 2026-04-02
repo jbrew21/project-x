@@ -18,14 +18,14 @@ import schedule
 import time
 
 import config
-from daily_scanner import post_daily_ratings
+from daily_scanner import post_daily_thread
 from mention_responder import poll_mentions
 
 
 def run_scheduler():
     """Run the daily scan on a schedule."""
     scheduled_time = f"{config.DAILY_SCAN_HOUR:02d}:{config.DAILY_SCAN_MINUTE:02d}"
-    schedule.every().day.at(scheduled_time).do(post_daily_ratings)
+    schedule.every().day.at(scheduled_time).do(post_daily_thread)
     print(f"📅 Daily scan scheduled for {scheduled_time} UTC")
 
     while True:
@@ -42,7 +42,7 @@ def main():
 
     if mode == "scan":
         print("Running one-time daily scan...")
-        post_daily_ratings()
+        post_daily_thread()
 
     elif mode == "watch":
         print("Starting mention responder...")
