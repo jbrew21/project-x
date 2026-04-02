@@ -137,10 +137,12 @@ def post_daily_thread():
         return
 
     count = len(rated_tweets)
+    from datetime import datetime
+    today = datetime.now().strftime("%B %d, %Y")
 
     # Tweet 1: Intro
     intro = (
-        f"🎣 DAILY RAGEBAIT REPORT\n\n"
+        f"🎣 DAILY RAGEBAIT REPORT — {today}\n\n"
         f"I just scanned thousands of viral tweets from the last 24 hours.\n\n"
         f"Here are the {count} worst ragebait offenders I found — "
         f"rated, roasted, and exposed. 🧵"
