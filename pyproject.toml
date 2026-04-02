@@ -1,0 +1,11 @@
+[tool.poetry]
+name = "ragebait-tracker"
+version = "1.0.0"
+description = "Ragebait Tracker by Newsreel AI"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[tool.setuptools]
+py-modules = ["main", "config", "ai_analyzer", "twitter_client", "daily_scanner", "mention_responder", "imghdr"]
