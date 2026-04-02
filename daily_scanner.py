@@ -122,31 +122,30 @@ def post_daily_thread():
         print("Nothing to post today.")
         return
 
-    # Tweet 1: The thread header
+    # Tweet 1: Intro tweet (standalone, gets the engagement)
     count = len(rated_tweets)
-    header = (
-        f"🎣 DAILY RAGEBAIT REPORT 🎣\n\n"
-        f"I scanned thousands of viral tweets from the last 24 hours. "
+    intro = (
+        f"🎣 DAILY RAGEBAIT REPORT\n\n"
+        f"I just scanned thousands of viral tweets from the last 24 hours.\n\n"
         f"Here are the {count} worst ragebait offenders I found — "
-        f"rated, roasted, and exposed.\n\n"
-        f"🧵👇"
+        f"rated, roasted, and exposed. 🧵"
     )
 
-    header_id = twitter_client.post_tweet(header)
-    if not header_id:
-        print("Failed to post thread header.")
+    intro_id = twitter_client.post_tweet(intro)
+    if not intro_id:
+        print("Failed to post intro tweet.")
         return
-    print("✅ Posted thread header")
+    print("✅ Posted intro tweet")
 
-    # Tweets 2-6: Each rated tweet as a reply in the thread
-    previous_id = header_id
+    # Tweets 2-6: Thread replies — each one rates a tweet and links to it
+    previous_id = intro_id
     for i, tweet in enumerate(rated_tweets, 1):
         author = tweet.get("author", "unknown")
         tweet_id = tweet.get("id", "")
         rating_text = tweet["rating"]
         tweet_link = f"https://x.com/{author}/status/{tweet_id}"
 
-        post_text = f"{i}/5\n\n{rating_text}\n\n👇 The tweet:\n{tweet_link}"
+        post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
 
         # Truncate if over 280 chars
         if len(post_text) > 280:
@@ -155,21 +154,20 @@ def post_daily_thread():
         new_id = twitter_client.post_tweet(post_text, reply_to_id=previous_id)
         if new_id:
             previous_id = new_id
-            print(f"✅ Posted {i}/5 — @{author}")
+            print(f"✅ Posted {i}/{count} — @{author}")
         else:
-            print(f"❌ Failed to post {i}/5 — @{author}")
+            print(f"❌ Failed to post {i}/{count} — @{author}")
 
-    # Final tweet: the closer
+    # Final tweet: CTA
     closer = (
-        "That's today's report. 🎣\n\n"
+        "That's today's report.\n\n"
         "See ragebait in the wild? Reply to any tweet and "
-        "tag @ragetrack — we'll rate it instantly.\n\n"
-        "Stay aware. Don't be the crop. 🌾\n\n"
-        "— Ragebait Tracker by Newsreel AI"
+        "tag @ragetrack — I'll rate it instantly. 🎣\n\n"
+        "Don't be the crop. 🌾"
     )
 
     twitter_client.post_tweet(closer, reply_to_id=previous_id)
-    print("✅ Posted thread closer")
+    print("✅ Posted closer")
 
 
 if __name__ == "__main__":
