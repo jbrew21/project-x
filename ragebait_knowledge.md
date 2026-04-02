@@ -152,90 +152,125 @@ The poster wins either way. You are the product.
 - Aggregating and repackaging real news with maximum outrage framing
 - Selective editing of video to create a false narrative
 
-## Rating Calibration
+## How to RATE Ragebait: The Scoring System
 
-### 1-2/10: Not Ragebait
-- Original reporting or genuine personal stories
-- Content that informs without trying to provoke a specific emotional reaction
-- Nuanced takes that acknowledge complexity
-- Sharing something interesting without inflammatory framing
-- Actual journalism, even if the topic itself is controversial
-- The content stands on its own without needing manipulation to go viral
+Rate each tweet by checking for the following signals. Each signal present adds to
+the score. Add up the signals, then assign a final rating.
 
-### 3-4/10: Light Seasoning
-- Slightly editorialized but mostly informational
-- Mild framing bias but the core content is real and presented fairly
-- A little spicy but not manipulative
-- Opinion content that's clearly labeled as opinion
-- You might notice a slight lean but it's not designed to enrage
+### SIGNAL CHECKLIST (check all that apply):
 
-### 5-6/10: Deliberate Buttons Being Pushed
-- Clear editorial framing designed to provoke a specific reaction
-- Cherry-picked content with noticeable spin
-- "Look at this!" energy without full context
-- The framing adds more heat than light
-- You can feel the engagement optimization at work
-- Some context missing but not egregiously so
+**Language Signals** (+1 each, max +3)
+- [ ] WWE/combat language: "SMOKED", "DESTROYED", "OWNED", "SLAMMED", "OBLITERATED",
+      "CLAPPED BACK", "WRECKED", "DEMOLISHED", "TORCHED", "EVISCERATED"
+- [ ] ALL CAPS on emotionally charged words for emphasis
+- [ ] Urgency/shock words: "just", "breaking", "wow", "I cannot believe", "WATCH"
+- [ ] Hyperbolic language that overstates what actually happened
+- [ ] Censored swear words (f*ck, sh*t) — makes reader fill in the blank
 
-### 7-8/10: Industrial-Grade Ragebait
-- Inflammatory framing that transforms mundane content into outrage
-- Obvious culture war framing on apolitical events
-- Key context removed or distorted to maximize emotional reaction
-- The tweet is more about the FRAMING than the actual content
-- WWE commentary language applied to everyday situations
-- Both sides will engage — that's the design
-- You're being played and you can feel it
-- Urgency and emotional priming throughout
-- Strip away the framing and the content is actually benign
+**Framing Signals** (+1-2 each, max +4)
+- [ ] (+2) The "strip the caption" test FAILS: remove the framing and the underlying
+      content is benign, wholesome, mundane, or just... normal. The bigger the gap
+      between framing and reality, the more points.
+- [ ] (+1) Leads with outrage/attack BEFORE the actual content (Trojan Horse pattern)
+- [ ] (+1) False suppression narrative: "media won't cover this", "nobody's talking
+      about this", "they don't want you to see this" — when it IS being covered
+- [ ] (+1) Culture war framing injected into an apolitical moment
+- [ ] (+1) "Main character" framing — casting someone as hero/villain of a narrative
+- [ ] (+1) Cherry-picked moment presented as representative of something bigger
 
-### 9-10/10: Weapons-Grade Ragebait
-- Pure manufactured outrage with zero informational value
-- Deliberately misleading or completely fabricated content
-- Designed EXCLUSIVELY to make people angry-share
-- The content wouldn't go viral without the inflammatory framing
-- Professional engagement farming — someone is getting paid for your anger
-- Misinformation dressed up as commentary
-- Completely staged scenarios presented as real
-- Context so stripped that the content becomes functionally false
+**Emotional Manipulation Signals** (+1 each, max +2)
+- [ ] Emotional priming: emojis (😂🤣💀🔥) that tell you how to feel before you
+      process the content
+- [ ] Rhetorical structure designed to provoke: "Imagine if...", "So let me get
+      this straight...", "This is what happens when..."
+- [ ] Us-vs-them framing that forces you to pick a side
+- [ ] Uses a sympathetic figure (kid, veteran, elderly person) as a prop/shield
+      for an ideological argument
+
+**Content Integrity Signals** (+1-2 each, max +3)
+- [ ] (+2) Key context removed that would change the meaning or emotional impact
+- [ ] (+2) Misleading, fabricated, or staged content presented as real
+- [ ] (+1) Content repackaged from another platform without original context
+- [ ] (+1) Quote or clip edited/truncated to change the meaning
+
+**Intent Signals** (+1 each, max +2)
+- [ ] The "who benefits" test: engagement benefits the POSTER, not the audience
+      (audience doesn't learn anything useful — they just get angry)
+- [ ] Designed so BOTH sides engage: one side angry-shares, other side victory-shares
+- [ ] The tweet could have shared the same information neutrally but CHOSE not to —
+      the inflammatory framing is a deliberate choice
+
+### SCORING → RATING CONVERSION:
+
+**0 signals = 1/10** — Clean. Genuinely informative. No manipulation detected.
+**1 signal = 2/10** — Basically clean. Maybe slightly editorialized. Not ragebait.
+**2 signals = 3/10** — Light seasoning. A little spicy but not manipulative.
+**3 signals = 4/10** — Noticeable framing choices. Starting to feel intentional.
+**4 signals = 5/10** — Deliberate engagement bait. You can feel the optimization.
+**5 signals = 6/10** — Clear ragebait. Multiple manipulation tactics at work.
+**6 signals = 7/10** — Industrial-grade. The framing IS the content.
+**7 signals = 8/10** — Heavy ragebait. Strip the framing and there's barely anything there.
+**8+ signals = 9/10** — Weapons-grade. Manufactured outrage. You are the crop.
+**9+ signals with fabrication/misinfo = 10/10** — Pure engagement farming. Zero
+informational value. Someone is getting paid for your anger.
+
+### CALIBRATION EXAMPLES:
+
+**Example 1: "Kid just SMOKED a CNN reporter outside of Artemis II launch..."**
+- Language: "SMOKED" (WWE language) → +1
+- Framing: Strip caption = kid excited about space (gap = huge) → +2
+- Framing: Culture war injected into apolitical moment (space launch) → +1
+- Emotional manipulation: 🤣 emoji priming → +1
+- Emotional manipulation: Uses kid as prop in media-vs-people narrative → +1
+- Content integrity: Kid wasn't "smoking" anyone, just being enthusiastic → +1
+- Intent: Could have shared as "cute kid moment at launch" but chose combat framing → +1
+- **Total: 8 signals → Rating: 9/10**
+
+**Example 2: "Legacy media is barely covering it... Tonight, four American astronauts
+leave Earth's orbit for the first time in 50 years..."**
+- Framing: Leads with media attack before actual content (Trojan Horse) → +1
+- Framing: False suppression narrative ("barely covering it" — every network is covering it) → +1
+- Intent: Could have just celebrated the launch but chose to lead with outrage → +1
+- Intent: Both sides engage — space fans share, media-haters share → +1
+- **Total: 4 signals → Rating: 5/10** (subtler, but still deliberate)
+
+**Example 3: "NASA's Artemis II crew just launched. First humans beyond Earth orbit since 1972. Historic."**
+- Language: No inflammatory language → 0
+- Framing: Factual, no spin → 0
+- Emotional manipulation: None → 0
+- **Total: 0 signals → Rating: 1/10** (just news, cleanly presented)
+
+**Example 4: "So let me get this straight... [misrepresented position] and you people
+think that's okay?"**
+- Language: Rhetorical setup designed to provoke → +1
+- Framing: Misrepresenting a position to make it easier to attack → +1
+- Emotional manipulation: "you people" us-vs-them framing → +1
+- Content integrity: Position is misrepresented/strawmanned → +2
+- Intent: Designed for both sides to engage (agreement + angry corrections) → +1
+- **Total: 6 signals → Rating: 7/10**
 
 ## Critical Analysis Rules
 
 1. **ALWAYS analyze the FRAMING, not just the underlying content.** A real event can
    absolutely be ragebait if the framing is designed to provoke rather than inform.
-   The Libs of TikTok "SMOKED" example is a perfect case: real event, ragebait framing.
 
-2. **Judge the TWEET, not the account.** Don't give anyone benefit of the doubt or
-   extra suspicion based on who they are. Analyze what's in front of you.
+2. **Judge the TWEET, not the account.** Analyze what's in front of you, period.
 
-3. **Look at the language.** Words like "SMOKED", "DESTROYED", "OWNED", "SLAMMED"
-   are massive ragebait indicators. Real news doesn't need WWE commentary.
+3. **Run the signal checklist.** Don't vibe-check it. Actually check for each signal
+   category and count them up. This is how you stay consistent and accurate.
 
-4. **Check for injected framing.** Would this content provoke outrage on its own, or
-   does it only become outrage because of how it's presented? If the latter → ragebait.
+4. **The "strip the caption" test is your most powerful tool.** Remove the framing.
+   What's actually there? If the answer is "something benign" and the tweet makes
+   it feel like a war, that's ragebait. The bigger the gap, the higher the score.
 
-5. **The "strip the caption" test.** Remove the caption/framing and look at the raw
-   content. If the raw content is benign but the tweet makes it feel like a fight,
-   that's ragebait. A kid being excited about space = benign. "Kid SMOKED a CNN
-   reporter" = manufactured conflict.
+5. **Politically neutral, always.** Left-wing ragebait and right-wing ragebait both
+   get called out equally. Ragebait is ragebait regardless of ideology.
 
-6. **The "who benefits" test.** Does the engagement benefit the audience (they learn
-   something useful) or just the poster (they get engagement/money)?
+6. **Subtle ragebait still counts.** A politician in a suit doing ragebait in
+   eloquent language is still ragebait. Don't let polish fool you. Run the checklist.
 
-7. **Emotional priming is a red flag.** If the tweet tells you how to feel (😂🤣💀)
-   before you've even processed the content, that's manipulation.
+7. **The inflammatory framing is always a CHOICE.** The same information could have
+   been shared neutrally. They chose not to. That choice is what you're rating.
 
-8. **The algorithm rewards anger.** Negative comments = "higher quality engagement."
-   If a tweet seems designed to generate angry replies from BOTH sides, it's ragebait.
-
-9. **Context removal = ragebait signal.** If the tweet only works as outrage because
-   context has been stripped away, that's manipulation.
-
-10. **Politically neutral analysis.** Left-wing ragebait and right-wing ragebait
-    both get called out equally. Ragebait is ragebait regardless of ideology.
-
-11. **Cross-platform context collapse.** Content that might be clearly satirical on
-    its original platform can become ragebait when reposted without context elsewhere.
-
-12. **Escalation patterns.** Ragebait creators must continuously escalate to maintain
-    engagement. If the framing seems extreme relative to the content, that's the
-    escalation cycle at work.
+8. **When in doubt, ask: "Would this go viral without the inflammatory framing?"**
+   If no → the engagement is driven by manipulation, not merit. That's ragebait.
