@@ -10,22 +10,22 @@ import ai_analyzer
 # These target common ragebait language patterns and inflammatory framing.
 RAGEBAIT_SEARCH_QUERIES = [
     # WWE/inflammatory language on news topics
-    '"DESTROYED" -is:retweet lang:en min_faves:1000',
-    '"SMOKED" -is:retweet lang:en min_faves:1000',
-    '"OWNED" -is:retweet lang:en min_faves:500',
-    '"SLAMMED" -is:retweet lang:en min_faves:1000',
+    '"DESTROYED" -is:retweet -is:reply lang:en',
+    '"SMOKED" -is:retweet -is:reply lang:en',
+    '"SLAMMED" -is:retweet -is:reply lang:en',
     # False suppression narratives
-    '"media won\'t cover" -is:retweet lang:en min_faves:500',
-    '"nobody is talking about" -is:retweet lang:en min_faves:500',
-    '"media doesn\'t want you" -is:retweet lang:en min_faves:500',
+    '"media won\'t cover" -is:retweet lang:en',
+    '"nobody is talking about" -is:retweet lang:en',
     # Outrage framing
-    '"let that sink in" -is:retweet lang:en min_faves:1000',
-    '"I can\'t believe" -is:retweet lang:en min_faves:1000',
-    '"this is insane" -is:retweet lang:en min_faves:1000',
+    '"let that sink in" -is:retweet lang:en',
+    '"this is insane" -is:retweet -is:reply lang:en',
     # Culture war bait
-    '"clapped back" -is:retweet lang:en min_faves:500',
-    '"gets WRECKED" -is:retweet lang:en min_faves:500',
+    '"clapped back" -is:retweet lang:en',
+    '"gets WRECKED" -is:retweet lang:en',
 ]
+
+# Minimum engagement to be considered for the daily thread
+MIN_ENGAGEMENT_SCORE = 500
 
 
 def scan_viral_ragebait() -> list[dict]:
@@ -53,7 +53,15 @@ def scan_viral_ragebait() -> list[dict]:
                 + m.get("reply_count", 0) * 3
                 + m.get("quote_count", 0) * 3)
 
+    # Filter out low-engagement tweets, then sort
+    all_tweets = [t for t in all_tweets if engagement_score(t) >= MIN_ENGAGEMENT_SCORE]
     all_tweets.sort(key=engagement_score, reverse=True)
+
+    print(f"Found {len(all_tweets)} tweets above engagement threshold")
+
+    if not all_tweets:
+        print("No high-engagement tweets found.")
+        return []
 
     # Take top 15 by engagement, then AI-rate them all and pick the 5 worst offenders
     candidates = all_tweets[:15]
