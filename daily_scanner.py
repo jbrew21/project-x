@@ -141,14 +141,11 @@ def post_daily_thread():
     previous_id = header_id
     for i, tweet in enumerate(rated_tweets, 1):
         author = tweet.get("author", "unknown")
+        tweet_id = tweet.get("id", "")
         rating_text = tweet["rating"]
+        tweet_link = f"https://x.com/{author}/status/{tweet_id}"
 
-        # Truncate the original tweet text for the quote
-        original_text = tweet["text"][:80]
-        if len(tweet["text"]) > 80:
-            original_text += "..."
-
-        post_text = f"{i}/5\n\n@{author}:\n\"{original_text}\"\n\n{rating_text}"
+        post_text = f"{i}/5\n\n{rating_text}\n\n👇 The tweet:\n{tweet_link}"
 
         # Truncate if over 280 chars
         if len(post_text) > 280:
