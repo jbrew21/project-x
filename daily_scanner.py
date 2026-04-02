@@ -9,19 +9,21 @@ import ai_analyzer
 # Search queries designed to surface likely ragebait tweets with high engagement.
 # These target common ragebait language patterns and inflammatory framing.
 RAGEBAIT_SEARCH_QUERIES = [
-    # WWE/inflammatory language on news topics
-    '"DESTROYED" -is:retweet -is:reply lang:en',
-    '"SMOKED" -is:retweet -is:reply lang:en',
-    '"SLAMMED" -is:retweet -is:reply lang:en',
+    # WWE/inflammatory language applied to news/politics (not gaming/sports)
+    '"DESTROYED" (media OR reporter OR liberal OR conservative) -is:retweet -is:reply lang:en',
+    '"SMOKED" (reporter OR CNN OR media OR interview) -is:retweet -is:reply lang:en',
+    '"SLAMMED" (media OR congress OR senator OR policy) -is:retweet -is:reply lang:en',
     # False suppression narratives
-    '"media won\'t cover" -is:retweet lang:en',
-    '"nobody is talking about" -is:retweet lang:en',
+    '"media won\'t cover this" -is:retweet lang:en',
+    '"nobody is talking about this" -is:retweet lang:en',
+    '"why isn\'t anyone talking about" -is:retweet lang:en',
     # Outrage framing
-    '"let that sink in" -is:retweet lang:en',
-    '"this is insane" -is:retweet -is:reply lang:en',
+    '"let that sink in" (politics OR media OR government) -is:retweet lang:en',
+    '"this is insane" (policy OR media OR government OR woke) -is:retweet -is:reply lang:en',
     # Culture war bait
-    '"clapped back" -is:retweet lang:en',
-    '"gets WRECKED" -is:retweet lang:en',
+    '"clapped back at" -is:retweet lang:en',
+    '"gets DESTROYED" -is:retweet lang:en',
+    '"absolutely WRECKED" -is:retweet lang:en',
 ]
 
 # Minimum engagement to be considered for the daily thread
@@ -76,6 +78,8 @@ def scan_viral_ragebait() -> list[dict]:
                 return i
         return 0
 
+    # Only keep tweets that actually scored as ragebait (5+/10)
+    rated = [t for t in rated if extract_rating(t) >= 5]
     rated.sort(key=extract_rating, reverse=True)
 
     # Return the top 5 highest-rated ragebait tweets
