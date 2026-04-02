@@ -73,6 +73,17 @@ def poll_mentions():
     print(f"👀 Watching for @{config.BOT_USERNAME} mentions...")
     last_id = _load_last_mention_id()
 
+    # Get our own user ID so we can skip self-mentions
+    try:
+        _client = twitter_client.get_client()
+        _me = _client.get_me()
+        bot_user_id = str(_me.data.id) if _me.data else None
+        bot_username = _me.data.username.lower() if _me.data else config.BOT_USERNAME.lower()
+        print(f"Bot account: @{bot_username} (ID: {bot_user_id})")
+    except Exception:
+        bot_user_id = None
+        bot_username = config.BOT_USERNAME.lower()
+
     while True:
         try:
             mentions = twitter_client.get_recent_mentions(since_id=last_id)
@@ -81,6 +92,13 @@ def poll_mentions():
                 print(f"Found {len(mentions)} new mention(s)")
                 # Process oldest first
                 for mention in reversed(mentions):
+                    # Skip our own tweets (don't reply to ourselves)
+                    if mention["mention_author"].lower() == bot_username:
+                        print(f"  Skipping self-mention {mention['mention_id']}")
+                        last_id = mention["mention_id"]
+                        _save_last_mention_id(last_id)
+                        continue
+
                     handle_mention(mention)
                     last_id = mention["mention_id"]
                     _save_last_mention_id(last_id)

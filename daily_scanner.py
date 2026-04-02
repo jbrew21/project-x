@@ -113,6 +113,8 @@ def scan_watchlist() -> list[dict]:
 
 def post_daily_thread():
     """Run the daily scan and post a threaded Top 5 Ragebait roundup."""
+    import time
+
     # Try viral search first, fall back to watchlist
     print("🔍 Searching X for today's worst ragebait...")
     rated_tweets = scan_viral_ragebait()
@@ -130,8 +132,9 @@ def post_daily_thread():
         print("Nothing to post today.")
         return
 
-    # Tweet 1: Intro tweet (standalone, gets the engagement)
     count = len(rated_tweets)
+
+    # Tweet 1: Intro
     intro = (
         f"🎣 DAILY RAGEBAIT REPORT\n\n"
         f"I just scanned thousands of viral tweets from the last 24 hours.\n\n"
@@ -144,8 +147,9 @@ def post_daily_thread():
         print("Failed to post intro tweet.")
         return
     print("✅ Posted intro tweet")
+    time.sleep(2)
 
-    # Tweets 2-6: Thread replies — each one rates a tweet and links to it
+    # Tweets 2+: Each rated tweet as a reply in the thread
     previous_id = intro_id
     for i, tweet in enumerate(rated_tweets, 1):
         author = tweet.get("author", "unknown")
@@ -153,11 +157,13 @@ def post_daily_thread():
         rating_text = tweet["rating"]
         tweet_link = f"https://x.com/{author}/status/{tweet_id}"
 
-        post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
+        # Keep rating short enough that the link fits
+        # Max tweet = 280 chars. Link = ~50 chars. Number + newlines = ~10 chars.
+        max_rating_len = 280 - len(tweet_link) - 15
+        if len(rating_text) > max_rating_len:
+            rating_text = rating_text[:max_rating_len - 3] + "..."
 
-        # Truncate if over 280 chars
-        if len(post_text) > 280:
-            post_text = post_text[:277] + "..."
+        post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
 
         new_id = twitter_client.post_tweet(post_text, reply_to_id=previous_id)
         if new_id:
@@ -165,6 +171,8 @@ def post_daily_thread():
             print(f"✅ Posted {i}/{count} — @{author}")
         else:
             print(f"❌ Failed to post {i}/{count} — @{author}")
+
+        time.sleep(2)
 
     # Final tweet: CTA
     closer = (
