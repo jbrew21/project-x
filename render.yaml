@@ -1,0 +1,27 @@
+services:
+  - type: worker
+    name: ragebait-tracker
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: X_API_KEY
+        sync: false
+      - key: X_API_SECRET
+        sync: false
+      - key: X_ACCESS_TOKEN
+        sync: false
+      - key: X_ACCESS_TOKEN_SECRET
+        sync: false
+      - key: X_BEARER_TOKEN
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: BOT_USERNAME
+        value: ragetrack
+      - key: MENTION_POLL_INTERVAL_SECONDS
+        value: "15"
+      - key: DAILY_SCAN_HOUR
+        value: "9"
+      - key: DAILY_SCAN_MINUTE
+        value: "0"
