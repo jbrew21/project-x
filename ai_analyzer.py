@@ -63,7 +63,7 @@ def analyze_tweet(tweet_text: str, author: str = "", detailed: bool = False) -> 
     user_message += f'Tweet: "{tweet_text}"'
 
     message = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-haiku-4-5-20251001",
         max_tokens=200,
         system=RAGEBAIT_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
