@@ -123,12 +123,13 @@ def post_daily_thread():
         return
 
     # Tweet 1: The thread header
+    count = len(rated_tweets)
     header = (
-        "🎣 DAILY RAGEBAIT REPORT 🎣\n\n"
-        "Good morning. Here are yesterday's top 5 most egregious "
-        "ragebait tweets, rated and roasted.\n\n"
-        "A thread 🧵👇\n\n"
-        "— Ragebait Tracker by Newsreel AI"
+        f"🎣 DAILY RAGEBAIT REPORT 🎣\n\n"
+        f"I scanned thousands of viral tweets from the last 24 hours. "
+        f"Here are the {count} worst ragebait offenders I found — "
+        f"rated, roasted, and exposed.\n\n"
+        f"🧵👇"
     )
 
     header_id = twitter_client.post_tweet(header)
