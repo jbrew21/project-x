@@ -117,7 +117,41 @@ def get_recent_mentions(since_id: str | None = None) -> list[dict]:
         return []
 
 
-def get_recent_tweets_from_user(username: str, max_results: int = 5) -> list[dict]:
+def search_viral_tweets(query: str, max_results: int = 50) -> list[dict]:
+    """Search for recent viral tweets matching a query. Returns tweets with metrics."""
+    client = get_client()
+    try:
+        response = client.search_recent_tweets(
+            query=query,
+            max_results=max_results,
+            tweet_fields=["text", "public_metrics", "created_at", "author_id"],
+            expansions=["author_id"],
+            user_fields=["username"],
+            sort_order="relevancy",
+        )
+
+        if not response.data:
+            return []
+
+        # Build user lookup
+        users = {}
+        if response.includes and "users" in response.includes:
+            for u in response.includes["users"]:
+                users[str(u.id)] = u.username
+
+        return [
+            {
+                "id": str(t.id),
+                "text": t.text,
+                "author": users.get(str(t.author_id), ""),
+                "metrics": t.public_metrics,
+            }
+            for t in response.data
+        ]
+
+    except Exception as e:
+        print(f"Error searching tweets: {e}")
+        return []
     """Get recent tweets from a specific user."""
     client = get_client()
     try:
