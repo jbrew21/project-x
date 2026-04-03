@@ -84,9 +84,9 @@ def analyze_tweet(tweet_text: str, author: str = "", detailed: bool = False) -> 
     )
 
     response = message.content[0].text
-    # Hard truncate to 200 chars — tweets need room for @mention + link
-    if len(response) > 200:
-        response = response[:197] + "..."
+    # Hard truncate — must be short enough to fit in a tweet with @mention + link
+    if len(response) > 180:
+        response = response[:177] + "..."
     return response
 
 

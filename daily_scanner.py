@@ -163,13 +163,19 @@ def post_daily_thread():
         rating_text = tweet["rating"]
         tweet_link = f"https://x.com/{author}/status/{tweet_id}"
 
-        # Keep rating short enough that the link fits
-        # Max tweet = 280 chars. Link = ~50 chars. Number + newlines = ~10 chars.
-        max_rating_len = 280 - len(tweet_link) - 15
+        # X counts links as 23 chars (t.co shortening). Number + newlines = ~10 chars.
+        # So we have 280 - 23 - 10 = 247 chars for the rating text.
+        max_rating_len = 240
         if len(rating_text) > max_rating_len:
             rating_text = rating_text[:max_rating_len - 3] + "..."
 
         post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
+
+        # Final safety check
+        if len(post_text) > 280:
+            over = len(post_text) - 277
+            rating_text = rating_text[:len(rating_text) - over - 3] + "..."
+            post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
 
         new_id = twitter_client.post_tweet(post_text, reply_to_id=previous_id)
         if new_id:
