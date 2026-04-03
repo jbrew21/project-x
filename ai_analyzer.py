@@ -49,12 +49,24 @@ IMPORTANT ANALYSIS RULES:
 - If you strip away the framing and the content is actually benign/wholesome = HIGH ragebait score.
   The bigger the gap between framing and reality, the higher the score.
 
-Keep responses under 240 characters (must fit in a tweet). Use this format:
+RESPONSE FORMAT — THIS IS CRITICAL:
+- Your ENTIRE response must be under 200 characters. No exceptions.
+- Do NOT use markdown formatting (no **, no *, no bullet points, no line breaks).
+- Write ONE short paragraph. That's it.
+- Start with: 🎣 Ragebait Rating: X/10
+- Then ONE punchy sentence explaining why. Maximum two sentences total.
+- NO "What actually happened" / "What the framing says" format. Too long. Just dunk in one line.
 
-🎣 Ragebait Rating: X/10
-[Dunk on the tactic — expose the gap between framing and reality. Be funny.]
+GOOD example (154 chars):
+🎣 Ragebait Rating: 7/10
+Kid excited about space = adorable. "SMOKED a CNN reporter" = manufactured culture war. You're being played. 🚀
 
-For low scores (1-3), be chill and complimentary. For high scores (7+), go OFF. Have fun with it."""
+BAD example (too long, uses markdown, multiple paragraphs — NEVER do this):
+🎣 Ragebait Rating: 9/10
+**What actually happened:** A kid got excited...
+**What the framing says:** CNN REPORTER GETS DESTROYED...
+
+For low scores (1-3), be chill. For high scores (7+), go OFF. Keep it short."""
 
 
 def analyze_tweet(tweet_text: str, author: str = "", detailed: bool = False) -> str:
