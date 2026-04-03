@@ -155,8 +155,9 @@ def post_daily_thread():
     print("✅ Posted intro tweet")
     time.sleep(2)
 
-    # Tweets 2+: Each rated tweet as a reply in the thread
-    # Post rating and link as SEPARATE tweets so the card preview doesn't eat the text
+    # Tweets 2+: Each rated tweet as two tweets:
+    # First: the link (shows as embedded tweet card — the context)
+    # Second: the rating (reply to the link — the dunk)
     previous_id = intro_id
     for i, tweet in enumerate(rated_tweets, 1):
         author = tweet.get("author", "unknown")
@@ -164,24 +165,29 @@ def post_daily_thread():
         rating_text = tweet["rating"]
         tweet_link = f"https://x.com/{author}/status/{tweet_id}"
 
-        # Post the rating text (no link — full display space)
-        post_text = f"{i}.\n\n{rating_text}"
-        if len(post_text) > 280:
-            post_text = post_text[:277] + "..."
+        # Post the link first — shows the original tweet as an embed
+        link_text = f"{i}. 👇"
+        link_id = twitter_client.post_tweet(
+            f"{link_text}\n\n{tweet_link}", reply_to_id=previous_id
+        )
+        if not link_id:
+            print(f"❌ Failed to post {i}/{count} link")
+            continue
 
-        new_id = twitter_client.post_tweet(post_text, reply_to_id=previous_id)
-        if new_id:
-            previous_id = new_id
-            print(f"✅ Posted {i}/{count} rating")
+        print(f"✅ Posted {i}/{count} link to @{author}")
+        time.sleep(1)
 
-            # Reply with just the link — renders as embedded tweet card
-            time.sleep(1)
-            link_id = twitter_client.post_tweet(tweet_link, reply_to_id=new_id)
-            if link_id:
-                previous_id = link_id
-                print(f"   ↳ Posted link to @{author}")
+        # Reply with the rating — the dunk
+        if len(rating_text) > 275:
+            rating_text = rating_text[:272] + "..."
+
+        rating_id = twitter_client.post_tweet(rating_text, reply_to_id=link_id)
+        if rating_id:
+            previous_id = rating_id
+            print(f"   ↳ Posted rating")
         else:
-            print(f"❌ Failed to post {i}/{count}")
+            previous_id = link_id
+            print(f"   ↳ Failed to post rating")
             print(f"✅ Posted {i}/{count} — @{author}")
         else:
             print(f"❌ Failed to post {i}/{count} — @{author}")
