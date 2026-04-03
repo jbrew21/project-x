@@ -156,6 +156,7 @@ def post_daily_thread():
     time.sleep(2)
 
     # Tweets 2+: Each rated tweet as a reply in the thread
+    # Post rating and link as SEPARATE tweets so the card preview doesn't eat the text
     previous_id = intro_id
     for i, tweet in enumerate(rated_tweets, 1):
         author = tweet.get("author", "unknown")
@@ -163,23 +164,24 @@ def post_daily_thread():
         rating_text = tweet["rating"]
         tweet_link = f"https://x.com/{author}/status/{tweet_id}"
 
-        # X counts links as 23 chars (t.co shortening). Number + newlines = ~10 chars.
-        # So we have 280 - 23 - 10 = 247 chars for the rating text.
-        max_rating_len = 240
-        if len(rating_text) > max_rating_len:
-            rating_text = rating_text[:max_rating_len - 3] + "..."
-
-        post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
-
-        # Final safety check
+        # Post the rating text (no link — full display space)
+        post_text = f"{i}.\n\n{rating_text}"
         if len(post_text) > 280:
-            over = len(post_text) - 277
-            rating_text = rating_text[:len(rating_text) - over - 3] + "..."
-            post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
+            post_text = post_text[:277] + "..."
 
         new_id = twitter_client.post_tweet(post_text, reply_to_id=previous_id)
         if new_id:
             previous_id = new_id
+            print(f"✅ Posted {i}/{count} rating")
+
+            # Reply with just the link — renders as embedded tweet card
+            time.sleep(1)
+            link_id = twitter_client.post_tweet(tweet_link, reply_to_id=new_id)
+            if link_id:
+                previous_id = link_id
+                print(f"   ↳ Posted link to @{author}")
+        else:
+            print(f"❌ Failed to post {i}/{count}")
             print(f"✅ Posted {i}/{count} — @{author}")
         else:
             print(f"❌ Failed to post {i}/{count} — @{author}")
