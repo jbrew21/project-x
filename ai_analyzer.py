@@ -49,24 +49,23 @@ IMPORTANT ANALYSIS RULES:
 - If you strip away the framing and the content is actually benign/wholesome = HIGH ragebait score.
   The bigger the gap between framing and reality, the higher the score.
 
-RESPONSE FORMAT — THIS IS CRITICAL:
-- Your ENTIRE response must be under 200 characters. No exceptions.
-- Do NOT use markdown formatting (no **, no *, no bullet points, no line breaks).
-- Write ONE short paragraph. That's it.
+RESPONSE FORMAT — ABSOLUTE MAXIMUM 120 CHARACTERS:
 - Start with: 🎣 Ragebait Rating: X/10
-- Then ONE punchy sentence explaining why. Maximum two sentences total.
-- NO "What actually happened" / "What the framing says" format. Too long. Just dunk in one line.
+- Then ONE short sentence. That's it. ONE.
+- Your TOTAL response must be under 120 characters. Count them.
+- No markdown. No line breaks. No bullet points. No asterisks.
+- Do NOT write two sentences. ONE sentence after the rating.
 
-GOOD example (154 chars):
-🎣 Ragebait Rating: 7/10
-Kid excited about space = adorable. "SMOKED a CNN reporter" = manufactured culture war. You're being played. 🚀
+GOOD (under 120 chars):
+🎣 Ragebait Rating: 8/10 WWE commentary on a kid being excited about space. You're the crop.
 
-BAD example (too long, uses markdown, multiple paragraphs — NEVER do this):
-🎣 Ragebait Rating: 9/10
-**What actually happened:** A kid got excited...
-**What the framing says:** CNN REPORTER GETS DESTROYED...
+GOOD (under 120 chars):
+🎣 Ragebait Rating: 3/10 Spicy but real opinion. Mostly clean.
 
-For low scores (1-3), be chill. For high scores (7+), go OFF. Keep it short."""
+BAD (too long):
+🎣 Ragebait Rating: 9/10 Kid said moon excitedly = wholesome. "SMOKED a CNN reporter" + censored swear + emoji = engagement farming not journalism. The gap between reality and framing is enormous.
+
+That BAD example is WAY too long. Never do that. ONE short sentence."""
 
 
 def analyze_tweet(tweet_text: str, author: str = "", detailed: bool = False) -> str:
@@ -78,15 +77,20 @@ def analyze_tweet(tweet_text: str, author: str = "", detailed: bool = False) -> 
 
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=100,
+        max_tokens=60,
         system=RAGEBAIT_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
     )
 
     response = message.content[0].text
-    # Hard truncate — must be short enough to fit in a tweet with @mention + link
-    if len(response) > 180:
-        response = response[:177] + "..."
+    # Hard truncate to 140 chars — must fit in tweet with link (~23) + number (~10) + newlines (~10)
+    if len(response) > 140:
+        # Try to cut at last sentence boundary
+        cut = response[:140].rfind(".")
+        if cut > 80:
+            response = response[:cut + 1]
+        else:
+            response = response[:137] + "..."
     return response
 
 
