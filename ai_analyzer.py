@@ -78,12 +78,16 @@ def analyze_tweet(tweet_text: str, author: str = "", detailed: bool = False) -> 
 
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=200,
+        max_tokens=100,
         system=RAGEBAIT_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
     )
 
-    return message.content[0].text
+    response = message.content[0].text
+    # Hard truncate to 200 chars — tweets need room for @mention + link
+    if len(response) > 200:
+        response = response[:197] + "..."
+    return response
 
 
 def analyze_tweet_batch(tweets: list[dict]) -> list[dict]:
