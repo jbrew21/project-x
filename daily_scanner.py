@@ -184,13 +184,10 @@ def post_daily_thread():
         rating_id = twitter_client.post_tweet(rating_text, reply_to_id=link_id)
         if rating_id:
             previous_id = rating_id
-            print(f"   ↳ Posted rating")
+            print(f"   ↳ Posted rating for @{author}")
         else:
             previous_id = link_id
-            print(f"   ↳ Failed to post rating")
-            print(f"✅ Posted {i}/{count} — @{author}")
-        else:
-            print(f"❌ Failed to post {i}/{count} — @{author}")
+            print(f"   ↳ Failed to post rating for @{author}")
 
         time.sleep(2)
 
