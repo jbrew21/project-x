@@ -10,6 +10,7 @@ Usage:
   python main.py scan            — Run one-time daily scan only (GitHub Actions cron)
   python main.py watch           — Run mention responder loop only (worker)
   python main.py mentions-once   — One mention-polling pass then exit (GitHub Actions cron)
+  python main.py health          — Check auth + X API credit status, print READY/BLOCKED
 """
 
 import sys
@@ -21,6 +22,35 @@ import time
 import config
 from daily_scanner import post_daily_thread
 from mention_responder import poll_mentions, poll_once
+
+
+def health_check() -> bool:
+    """Print a clear readiness report. Returns True if the bot can actually operate.
+
+    Use after topping up the X API plan to confirm the credit wall is cleared:
+        python main.py health
+    """
+    import twitter_client
+    c = twitter_client.get_client()
+    try:
+        me = c.get_me()
+        print(f"Auth OK — @{me.data.username}")
+    except Exception as e:
+        print(f"AUTH FAILED: {e}")
+        return False
+    try:
+        r = c.search_recent_tweets(query="trump lang:en", max_results=10)
+        n = len(r.data) if r.data else 0
+        print(f"X API read OK — search returned {n} tweets")
+        print("READY: credits available. Daily thread + mentions will run.")
+        return True
+    except Exception as e:
+        if "402" in str(e):
+            print("BLOCKED: X API credits depleted (402). Top up the plan in the "
+                  "developer portal — nothing runs until then.")
+        else:
+            print(f"BLOCKED: {e}")
+        return False
 
 
 def run_scheduler():
@@ -41,7 +71,11 @@ def main():
     print("🎣 RAGEBAIT TRACKER by Newsreel AI")
     print("=" * 50)
 
-    if mode == "scan":
+    if mode == "health":
+        ok = health_check()
+        sys.exit(0 if ok else 1)
+
+    elif mode == "scan":
         print("Running one-time daily scan...")
         post_daily_thread()
 
