@@ -7,12 +7,19 @@ Two entry points:
 
 import os
 import time
+from datetime import datetime, timedelta, timezone
 
 import config
 import twitter_client
 import ai_analyzer
 
 LAST_MENTION_FILE = ".last_mention_id"
+
+# Never reply to a mention older than this. The X mentions endpoint can return a large
+# backlog of historical mentions; without this guard a cold start (empty state) would
+# re-reply to months-old tweets. Any real, live tag is only minutes old, and the cron
+# runs every 15 min, so 90 min is a safe ceiling that still tolerates GitHub cron delay.
+MENTION_MAX_AGE_MINUTES = 90
 
 
 def _load_last_mention_id() -> str | None:
@@ -84,8 +91,28 @@ def _get_bot_username() -> str:
     return config.BOT_USERNAME.lower()
 
 
+def _is_too_old(mention: dict) -> bool:
+    """True if the mention is older than MENTION_MAX_AGE_MINUTES (skip, don't reply)."""
+    created = mention.get("mention_created_at")
+    if not created:
+        return False
+    if isinstance(created, str):
+        try:
+            created = datetime.fromisoformat(created.replace("Z", "+00:00"))
+        except ValueError:
+            return False
+    if created.tzinfo is None:
+        created = created.replace(tzinfo=timezone.utc)
+    cutoff = datetime.now(timezone.utc) - timedelta(minutes=MENTION_MAX_AGE_MINUTES)
+    return created < cutoff
+
+
 def _process_new_mentions(last_id: str | None, bot_username: str) -> str | None:
-    """Reply to every new mention (oldest first). Returns the newest processed id."""
+    """Reply to every new, recent mention (oldest first). Returns the newest processed id.
+
+    Advances last_id past skipped mentions too, so a stale backlog is consumed once and
+    never re-seen — this is what makes a cold start (empty state) safe.
+    """
     mentions = twitter_client.get_recent_mentions(since_id=last_id)
     if not mentions:
         return last_id
@@ -94,6 +121,9 @@ def _process_new_mentions(last_id: str | None, bot_username: str) -> str | None:
     for mention in reversed(mentions):  # oldest first
         if mention["mention_author"].lower() == bot_username:
             print(f"  Skipping self-mention {mention['mention_id']}")
+        elif _is_too_old(mention):
+            print(f"  Skipping stale mention {mention['mention_id']} "
+                  f"(older than {MENTION_MAX_AGE_MINUTES} min)")
         else:
             handle_mention(mention)
         last_id = mention["mention_id"]

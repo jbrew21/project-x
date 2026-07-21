@@ -111,6 +111,7 @@ def get_recent_mentions(since_id: str | None = None) -> list[dict]:
                 "mention_id": str(tweet.id),
                 "mention_text": tweet.text,
                 "mention_author": users.get(str(tweet.author_id), ""),
+                "mention_created_at": tweet.created_at,
                 "parent_tweet_id": parent_tweet_id,
                 "parent_tweet_text": referenced_tweets.get(parent_tweet_id, "")
                     if parent_tweet_id else None,
