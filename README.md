@@ -81,17 +81,24 @@ config.py            — Configuration and environment variables
 - **X API**: Free tier supports reading tweets and posting (rate-limited)
 - **Claude API**: ~$0.01-0.05 per tweet analysis (Sonnet model). A typical day costs pennies.
 
-## Deployment
+## Deployment (GitHub Actions — current)
 
-For always-on operation, deploy to any server or cloud platform:
+The bot runs entirely on GitHub Actions cron. No always-on server needed.
 
-```bash
-# Using screen/tmux
-screen -S ragebait
-python main.py
+- `.github/workflows/daily-thread.yml` — posts the Daily Ragebait Report once a day
+  (13:00 UTC / 9am ET) via `python main.py scan`.
+- `.github/workflows/mentions.yml` — replies to new `@ragetrack` tags every 15 min via
+  `python main.py mentions-once`. Mention state (`.last_mention_id`) is carried between
+  runs with `actions/cache`; an age guard prevents replying to old mentions on a cold start.
 
-# Or with systemd, Docker, Railway, Render, etc.
-```
+Secrets live in the repo's Actions secrets (X_* + ANTHROPIC_API_KEY). To run the daily
+thread on demand: Actions tab → "Daily Ragebait Report" → Run workflow (or
+`gh workflow run "Daily Ragebait Report"`).
+
+### Alternative: always-on worker
+
+`python main.py` runs the in-process scheduler + mention loop together on any host
+(Render/Railway/systemd). Not used currently — the Actions cron is more reliable.
 
 ---
 
