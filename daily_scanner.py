@@ -19,39 +19,54 @@ import twitter_client
 import ai_analyzer
 
 
-# Search queries designed to surface likely ragebait tweets with high engagement.
-# These target common ragebait language patterns and inflammatory framing.
+# Whole-of-X search is the PRIMARY discovery engine — the daily thread should scan all
+# of X, not a handful of watchlisted accounts. Queries are anchored on US political /
+# cultural terms so the net is broad but stays in the English-language US discourse the
+# audience recognizes (raw ragebait phrasing alone drags in unrelated foreign politics).
+_US_ANCHOR = ("Trump OR Biden OR MAGA OR Democrat OR Republican OR liberal OR conservative "
+              "OR woke OR CNN OR Fox OR AOC OR DEI OR Congress OR Senate OR immigrant OR border")
+# Kept lean (12 queries) because the X API account is on a metered credit plan — every
+# search request draws from a finite monthly pool. These 12 cover the highest-signal
+# ragebait patterns across all of X while staying anchored in US/English discourse.
+# If the plan has generous credits, more queries can be added back for wider coverage.
 RAGEBAIT_SEARCH_QUERIES = [
-    # WWE/inflammatory language applied to news/politics (not gaming/sports)
-    '"DESTROYED" (media OR reporter OR liberal OR conservative OR Democrat OR Republican) -is:retweet -is:reply lang:en',
-    '"SMOKED" (reporter OR CNN OR media OR interview OR Democrat OR Republican) -is:retweet -is:reply lang:en',
-    '"SLAMMED" (media OR congress OR senator OR policy OR Biden OR Trump) -is:retweet -is:reply lang:en',
-    # False suppression narratives
-    '"media won\'t cover this" -is:retweet lang:en',
-    '"nobody is talking about this" -is:retweet lang:en',
-    '"why isn\'t anyone talking about" -is:retweet lang:en',
-    # Outrage framing
-    '"let that sink in" (politics OR media OR government) -is:retweet lang:en',
-    '"this is insane" (policy OR media OR government OR woke) -is:retweet -is:reply lang:en',
-    # Culture war bait
-    '"clapped back" -is:retweet lang:en',
-    '"gets DESTROYED" -is:retweet lang:en',
-    '"absolutely WRECKED" -is:retweet lang:en',
+    # WWE/inflammatory language on US politics/media
+    f'"DESTROYED" ({_US_ANCHOR}) -is:retweet -is:reply lang:en',
+    f'"SMOKED" ({_US_ANCHOR}) -is:retweet -is:reply lang:en',
+    f'"SLAMMED" ({_US_ANCHOR}) -is:retweet -is:reply lang:en',
+    f'"gets DESTROYED" ({_US_ANCHOR}) -is:retweet lang:en',
+    f'"absolutely WRECKED" ({_US_ANCHOR}) -is:retweet lang:en',
+    # False suppression / "nobody's talking about this" narratives
+    f'"the media won\'t tell you" ({_US_ANCHOR}) -is:retweet lang:en',
+    f'"nobody is talking about" ({_US_ANCHOR}) -is:retweet lang:en',
+    # Outrage priming
+    f'"let that sink in" ({_US_ANCHOR}) -is:retweet lang:en',
+    f'"this is insane" ({_US_ANCHOR}) -is:retweet -is:reply lang:en',
+    f'"you can\'t make this up" ({_US_ANCHOR}) -is:retweet lang:en',
+    # Us-vs-them rage triggers
+    f'"triggered the left" -is:retweet lang:en',
+    f'"triggered the right" -is:retweet lang:en',
 ]
 
-# Minimum public engagement for a tweet to even be considered.
-MIN_ENGAGEMENT_SCORE = 100
+# Minimum public engagement for a search tweet to even be considered. High enough to
+# stay viral, low enough that the whole-X net reliably returns a full slate each day.
+MIN_ENGAGEMENT_SCORE = 250
 # Only tweets from roughly the last day count for a "last 24 hours" report.
 # 36h of slack absorbs timezone / scan-timing drift without going stale.
 RECENCY_HOURS = 36
 # A tweet must score at least this on the 1-10 ragebait scale to make the thread.
+# 6+ is genuine ragebait per the rubric; the score+engagement sort still floats the
+# worst offenders to the top of the thread.
 MIN_RAGEBAIT_SCORE = 6
 # How many candidates to send to the AI rater (bounds cost + rate limits).
-MAX_WATCHLIST_CANDIDATES = 12
-MAX_SEARCH_CANDIDATES = 8
-# Cap tweets-per-account in the final thread so it reads as a balanced report,
-# not a grudge against one account.
+# Search is primary (big pool from all of X); watchlist is a small supplement.
+MAX_SEARCH_CANDIDATES = 28
+MAX_WATCHLIST_CANDIDATES = 6
+# Cap tweets-per-account in the final thread so it reads as a balanced report.
 MAX_PER_AUTHOR = 2
+# At most this many watchlisted-account tweets in the final 5, so the thread is
+# dominated by whole-X discoveries rather than the same few accounts every day.
+MAX_WATCHLIST_IN_THREAD = 2
 
 
 def _engagement_score(tweet: dict) -> int:
@@ -123,11 +138,21 @@ def gather_search_candidates() -> list[dict]:
 
 
 def find_daily_ragebait() -> list[dict]:
-    """Gather from watchlist + search, AI-rate everything, keep the 5 worst offenders."""
+    """Scan the whole of X (primary) + watchlist (supplement), AI-rate, keep 5 worst.
+
+    Search across all of X is the star of the show. The watchlist is only a supplement,
+    and is capped to MAX_WATCHLIST_IN_THREAD slots so the thread is dominated by fresh
+    whole-X discoveries instead of the same few accounts every day.
+    """
+    watchlist_ids = set()
     candidates = []
     seen = set()
-    # Watchlist first so on-brand accounts win ties.
-    for tweet in gather_watchlist_candidates() + gather_search_candidates():
+    # Whole-X search FIRST (primary), then watchlist as supplement.
+    search = gather_search_candidates()
+    watch = gather_watchlist_candidates()
+    for username in config.WATCHLIST:
+        watchlist_ids.add(username.lower())
+    for tweet in search + watch:
         if tweet["id"] not in seen:
             seen.add(tweet["id"])
             candidates.append(tweet)
@@ -144,25 +169,37 @@ def find_daily_ragebait() -> list[dict]:
     rated.sort(key=lambda t: (_extract_rating(t), _engagement_score(t)), reverse=True)
     print(f"{len(rated)} tweets scored >= {MIN_RAGEBAIT_SCORE}/10")
 
-    # Greedily pick the top 5 while capping tweets-per-account for a balanced thread.
-    top, per_author = [], {}
+    def _is_watchlist(tweet) -> bool:
+        return (tweet.get("source") == "watchlist"
+                or (tweet.get("author") or "").lower() in watchlist_ids)
+
+    # Greedily pick the top 5: cap per-author, and cap total watchlist tweets so
+    # whole-X discoveries lead the thread.
+    top, per_author, watch_used = [], {}, 0
     for tweet in rated:
         author = (tweet.get("author") or "").lower()
         if per_author.get(author, 0) >= MAX_PER_AUTHOR:
             continue
+        if _is_watchlist(tweet) and watch_used >= MAX_WATCHLIST_IN_THREAD:
+            continue
         per_author[author] = per_author.get(author, 0) + 1
+        if _is_watchlist(tweet):
+            watch_used += 1
         top.append(tweet)
         if len(top) == 5:
             break
 
-    # If the cap left us short (few accounts had ragebait today), backfill by score.
+    # If the caps left us short, backfill by score (author cap still respected).
     if len(top) < 5:
         chosen = {t["id"] for t in top}
         for tweet in rated:
-            if tweet["id"] not in chosen:
-                top.append(tweet)
-                if len(top) == 5:
-                    break
+            author = (tweet.get("author") or "").lower()
+            if tweet["id"] in chosen or per_author.get(author, 0) >= MAX_PER_AUTHOR:
+                continue
+            per_author[author] = per_author.get(author, 0) + 1
+            top.append(tweet)
+            if len(top) == 5:
+                break
 
     return top
 

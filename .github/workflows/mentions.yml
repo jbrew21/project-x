@@ -1,12 +1,15 @@
 name: Mention Responder
 
-# Replies to anyone who tags @ragetrack on a tweet. Runs every 5 minutes (GitHub's
-# minimum cron granularity), so a tag gets an answer within ~5 min.
-# State (.last_mention_id) is carried between runs via the cache below, so each
-# mention is answered exactly once. Scheduled runs can be delayed a bit under load.
+# Replies to anyone who tags @ragetrack on a tweet.
+# The X API account is on a METERED CREDIT plan, so every poll costs credits even when
+# there are no new mentions. This interval trades responsiveness against credit burn:
+#   */5 = ~288 polls/day (snappiest)  ·  */10 = 144/day (balanced, default)  ·  */30 = 48/day (frugal)
+# Tune to whatever the plan's monthly credit budget allows.
+# NOTE: GitHub's `schedule` trigger is unreliable/delayed — for a truly responsive bot,
+# run `python main.py watch` on an always-on host (Render worker) instead of this cron.
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/10 * * * *"
   workflow_dispatch: {}
 
 concurrency:
