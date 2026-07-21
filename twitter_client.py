@@ -151,6 +151,8 @@ def search_viral_tweets(query: str, max_results: int = 50) -> list[dict]:
                 "text": t.text,
                 "author": users.get(str(t.author_id), ""),
                 "metrics": t.public_metrics,
+                "created_at": t.created_at,
+                "source": "search",
             }
             for t in response.data
         ]
@@ -184,6 +186,8 @@ def get_recent_tweets_from_user(username: str, max_results: int = 5) -> list[dic
                 "text": t.text,
                 "author": username,
                 "metrics": t.public_metrics,
+                "created_at": t.created_at,
+                "source": "watchlist",
             }
             for t in response.data
         ]

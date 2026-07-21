@@ -1,0 +1,37 @@
+name: Daily Ragebait Report
+
+# Posts the @ragetrack "Daily Ragebait Report" thread once every morning.
+# 13:00 UTC = 9:00am ET (EDT). GitHub may delay scheduled runs a few minutes under load.
+on:
+  schedule:
+    - cron: "0 13 * * *"
+  workflow_dispatch: {}   # allow manual "Run workflow" for testing
+
+concurrency:
+  group: daily-thread
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Post daily ragebait thread
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BOT_USERNAME: ragetrack
+        run: python main.py scan

@@ -6,9 +6,10 @@ An automated X bot that:
   2. 24/7: Responds to anyone who tags @ragebaittracker on a tweet
 
 Usage:
-  python main.py          — Run both daily scanner + mention responder
-  python main.py scan     — Run one-time daily scan only
-  python main.py watch    — Run mention responder only
+  python main.py                 — Run both daily scanner + mention responder (worker)
+  python main.py scan            — Run one-time daily scan only (GitHub Actions cron)
+  python main.py watch           — Run mention responder loop only (worker)
+  python main.py mentions-once   — One mention-polling pass then exit (GitHub Actions cron)
 """
 
 import sys
@@ -19,7 +20,7 @@ import time
 
 import config
 from daily_scanner import post_daily_thread
-from mention_responder import poll_mentions
+from mention_responder import poll_mentions, poll_once
 
 
 def run_scheduler():
@@ -43,6 +44,10 @@ def main():
     if mode == "scan":
         print("Running one-time daily scan...")
         post_daily_thread()
+
+    elif mode == "mentions-once":
+        print("Running one-time mention poll...")
+        poll_once()
 
     elif mode == "watch":
         print("Starting mention responder...")

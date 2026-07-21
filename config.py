@@ -14,7 +14,7 @@ X_BEARER_TOKEN = os.getenv("X_BEARER_TOKEN")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 # Bot settings
-BOT_USERNAME = os.getenv("BOT_USERNAME", "ragebaittracker")
+BOT_USERNAME = os.getenv("BOT_USERNAME", "ragetrack")
 DAILY_SCAN_HOUR = int(os.getenv("DAILY_SCAN_HOUR", "9"))
 DAILY_SCAN_MINUTE = int(os.getenv("DAILY_SCAN_MINUTE", "0"))
 MENTION_POLL_INTERVAL_SECONDS = int(os.getenv("MENTION_POLL_INTERVAL_SECONDS", "30"))
