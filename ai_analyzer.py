@@ -50,23 +50,53 @@ IMPORTANT ANALYSIS RULES:
   The bigger the gap between framing and reality, the higher the score.
 
 RESPONSE FORMAT — THIS IS CRITICAL:
-- Your ENTIRE response must be under 200 characters. No exceptions.
-- Do NOT use markdown formatting (no **, no *, no bullet points, no line breaks).
-- Write ONE short paragraph. That's it.
+- Your ENTIRE response must be 220 characters or fewer. Count as you go.
+- ALWAYS finish your sentence. NEVER trail off or get cut mid-thought. A complete
+  short dunk beats a long one that runs out of room. If you're near the limit, wrap up.
+- Do NOT use markdown formatting (no **, no *, no bullet points).
 - Start with: 🎣 Ragebait Rating: X/10
-- Then ONE punchy sentence explaining why. Maximum two sentences total.
-- NO "What actually happened" / "What the framing says" format. Too long. Just dunk in one line.
+- Then ONE punchy, COMPLETE sentence explaining why (two very short ones max).
+- NO "What actually happened" / "What the framing says" format. Too long. Just dunk.
 
-GOOD example (154 chars):
+GOOD example (154 chars, complete):
 🎣 Ragebait Rating: 7/10
 Kid excited about space = adorable. "SMOKED a CNN reporter" = manufactured culture war. You're being played. 🚀
 
-BAD example (too long, uses markdown, multiple paragraphs — NEVER do this):
+BAD (runs long and gets cut off — NEVER do this):
 🎣 Ragebait Rating: 9/10
-**What actually happened:** A kid got excited...
-**What the framing says:** CNN REPORTER GETS DESTROYED...
+Strip the framing and this is just a normal exchange, but the caption turns it into COMBAT so you rage-share without ever actually rea...
 
-For low scores (1-3), be chill. For high scores (7+), go OFF. Keep it short."""
+For low scores (1-3), be chill. For high scores (7+), go OFF. Keep it complete and short."""
+
+
+# A tweet is 280 chars. In a thread each entry also carries a link (X counts ANY URL as
+# 23 chars) plus a number prefix, so the rating body must stay well under 280. 220 leaves
+# comfortable room in both the daily thread and mention replies.
+TWEET_CHAR_LIMIT = 220
+
+
+def fit_tweet(text: str, limit: int = TWEET_CHAR_LIMIT) -> str:
+    """Trim text to <= limit WITHOUT chopping mid-word.
+
+    Prefer ending on a complete sentence; else cut at the last word boundary and add a
+    single-char ellipsis. Never produces a mid-word cut like '...COMBAT so you rage-sha'.
+    """
+    text = text.strip()
+    if len(text) <= limit:
+        return text
+    window = text[:limit]
+    # Prefer the last sentence-ending punctuation, if it's not too early.
+    end = max(window.rfind(". "), window.rfind("! "), window.rfind("? "),
+              window.rfind(".\n"), window.rfind("!\n"), window.rfind("?\n"))
+    if end == -1 and window[-1:] in ".!?":
+        end = len(window) - 2
+    if end >= int(limit * 0.55):
+        return window[:end + 1].strip()
+    # Otherwise cut at the last whole word and mark the truncation.
+    sp = window.rfind(" ")
+    if sp > 0:
+        window = window[:sp]
+    return window.rstrip(" ,;:-") + "…"
 
 
 def analyze_tweet(tweet_text: str, author: str = "", detailed: bool = False) -> str:
@@ -78,16 +108,14 @@ def analyze_tweet(tweet_text: str, author: str = "", detailed: bool = False) -> 
 
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=100,
+        max_tokens=160,  # headroom so a complete answer is never cut mid-sentence by tokens
         system=RAGEBAIT_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
     )
 
     response = message.content[0].text
-    # Hard truncate — must be short enough to fit in a tweet with @mention + link
-    if len(response) > 180:
-        response = response[:177] + "..."
-    return response
+    # Trim to a clean word/sentence boundary (never mid-word) so nothing gets butchered.
+    return fit_tweet(response)
 
 
 def analyze_tweet_batch(tweets: list[dict]) -> list[dict]:

@@ -62,6 +62,8 @@ MIN_RAGEBAIT_SCORE = 6
 # Search is primary (big pool from all of X); watchlist is a small supplement.
 MAX_SEARCH_CANDIDATES = 28
 MAX_WATCHLIST_CANDIDATES = 6
+# X shortens every URL to a t.co link counted as 23 chars, no matter its real length.
+LINK_TCO_LEN = 23
 # Cap tweets-per-account in the final thread so it reads as a balanced report.
 MAX_PER_AUTHOR = 2
 # At most this many watchlisted-account tweets in the final 5, so the thread is
@@ -241,17 +243,12 @@ def post_daily_thread():
         rating_text = tweet["rating"]
         tweet_link = f"https://x.com/{author}/status/{tweet_id}"
 
-        # X counts links as 23 chars. Number + newlines ~= 10 chars.
-        max_rating_len = 240
-        if len(rating_text) > max_rating_len:
-            rating_text = rating_text[:max_rating_len - 3] + "..."
-
-        post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
-
-        if len(post_text) > 280:
-            over = len(post_text) - 277
-            rating_text = rating_text[:len(rating_text) - over - 3] + "..."
-            post_text = f"{i}.\n\n{rating_text}\n\n{tweet_link}"
+        # X counts ANY url as 23 chars (t.co), regardless of its real length. Budget the
+        # rating against that, not len(url), and trim on a word boundary — no mid-word cuts.
+        prefix = f"{i}.\n\n"
+        fixed = len(prefix) + len("\n\n") + LINK_TCO_LEN
+        rating_text = ai_analyzer.fit_tweet(rating_text, 280 - fixed)
+        post_text = f"{prefix}{rating_text}\n\n{tweet_link}"
 
         new_id = twitter_client.post_tweet(post_text, reply_to_id=previous_id)
         if new_id:
